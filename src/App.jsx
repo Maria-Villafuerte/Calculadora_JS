@@ -8,13 +8,25 @@ const App = () => {
   const [operator, setOperator] = useState(null);
   const [firstOperand, setFirstOperand] = useState(null);
   const [waitingForSecondOperand, setWaitingForSecondOperand] = useState(false);
+  const [lastInputValue, setLastInputValue] = useState(null);
 
   const inputDigit = (digit) => {
     if (waitingForSecondOperand) {
       setDisplayValue(digit);
       setWaitingForSecondOperand(false);
     } else {
-      setDisplayValue((prev) => (prev === '' ? digit : prev + digit));
+      if (displayValue.length < 9) {
+        setDisplayValue((prev) => (prev === '' ? digit : prev + digit));
+      }
+    }
+  };
+
+  const inputDot = () => {
+    if (waitingForSecondOperand) {
+      setDisplayValue('.');
+      setWaitingForSecondOperand(false);
+    } else if (!displayValue.includes('.') && displayValue.length < 9) {
+      setDisplayValue((prev) => (prev === '' ? '0.' : prev + '.'));
     }
   };
 
@@ -24,10 +36,29 @@ const App = () => {
     if (firstOperand === null && !isNaN(inputValue)) {
       setFirstOperand(inputValue);
     } else if (operator) {
-      const result = performCalculation[operator](firstOperand, inputValue);
+      if (isNaN(inputValue)) {
+        setDisplayValue('ERROR');
+        setFirstOperand(null);
+        setOperator(null);
+        setWaitingForSecondOperand(false);
+        return;
+      }
+      
+      const secondOperand = lastInputValue !== null ? lastInputValue : inputValue;
+      const result = performCalculation[operator](firstOperand, secondOperand);
+      const resultString = String(result);
 
-      setDisplayValue(String(result).substring(0, 9));
+      if (result < 0 || resultString.length > 9 || result > 999999999) {
+        setDisplayValue('ERROR');
+        setFirstOperand(null);
+        setOperator(null);
+        setWaitingForSecondOperand(false);
+        return;
+      }
+
+      setDisplayValue(resultString.substring(0, 9));
       setFirstOperand(result);
+      setLastInputValue(secondOperand);
     }
 
     setWaitingForSecondOperand(true);
@@ -47,6 +78,7 @@ const App = () => {
     setFirstOperand(null);
     setOperator(null);
     setWaitingForSecondOperand(false);
+    setLastInputValue(null);
   };
 
   return (
@@ -69,6 +101,7 @@ const App = () => {
         <Button label="2" onClick={() => inputDigit('2')} />
         <Button label="3" onClick={() => inputDigit('3')} />
         <Button label="0" onClick={() => inputDigit('0')} />
+        <Button label="." onClick={inputDot} />
       </div>
     </div>
   );

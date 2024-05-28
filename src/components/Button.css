@@ -7,6 +7,7 @@
   background: #b16dbd;
   cursor: pointer;
   transition: background 0.3s;
+  border-radius: 8px;
 }
 
 .button:hover {

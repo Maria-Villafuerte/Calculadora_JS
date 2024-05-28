@@ -1,7 +1,7 @@
 .calculator {
   width: 320px;
   height: 480px;
-  background-color: #f1f3f4;
+  background-color: rgb(6, 10, 19);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -9,11 +9,13 @@
   justify-content: center;
   margin: 0 auto;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  align-self: center;
 }
 
 .keypad {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
+  background-color: rgb(6, 10, 19);
 }
 
